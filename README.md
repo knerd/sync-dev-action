@@ -27,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Synchronize Dev Branch
-        uses: knerd/sync-dev@v1
+        uses: knerd/sync-dev-action@v1
         with:
           MAIN: 'master'
           DEVELOP: 'dev'
