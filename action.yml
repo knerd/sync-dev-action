@@ -1,14 +1,14 @@
 name: 🤖⏩ Synchronize dev
-description: 'Attempts to Fast Forward the dev branch with the master branch, or create a PR to develop upon failing.'
+description: 'Attempts to Fast Forward the develop branch with the main branch, or create a PR to develop upon failing.'
 inputs:
   MAIN:
     description: 'Main branch name'
-    required: true
-    default: 'master'
+    required: false 
+    default: 'main'
   DEVELOP:
     description: 'Develop branch name'
-    required: true
-    default: 'dev'
+    required: false 
+    default: 'develop'
   BOT_NAME:
     description: 'Name of the bot'
     required: true
