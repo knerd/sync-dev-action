@@ -18,6 +18,9 @@ inputs:
   TOKEN:
     description: 'GitHub token'
     required: true
+  VERSION:
+    description: 'Symantic version of main branch'
+    required: false 
 runs:
   using: 'composite'
   steps:
@@ -27,7 +30,11 @@ runs:
         fetch-depth: 0 
     - name: 🔖 Get Version 
       run: |
-        echo "VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
+        VERSION=${{ inputs.VERSION }}
+        if [ -z "$VERSION" ]; then
+          VERSION=$(node -p "require('./package.json').version")
+        fi
+        echo "VERSION=$VERSION" >> $GITHUB_ENV
       shell: bash
     - name: ⏩ Fast Forward develop
       run: |
