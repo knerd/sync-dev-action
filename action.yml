@@ -1,0 +1,66 @@
+name: 🤖⏩ Synchronize dev
+description: 'Attempts to Fast Forward the dev branch with the master branch, or create a PR to develop upon failing.'
+inputs:
+  MAIN:
+    description: 'Main branch name'
+    required: true
+    default: 'master'
+  DEVELOP:
+    description: 'Develop branch name'
+    required: true
+    default: 'dev'
+  BOT_NAME:
+    description: 'Name of the bot'
+    required: true
+  BOT_EMAIL:
+    description: 'Email of the bot'
+    required: true
+  TOKEN:
+    description: 'GitHub token'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - name: 🏗 Checkout master
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0 
+    - name: 🔖 Get Version 
+      run: |
+        echo "VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
+      shell: bash
+    - name: ⏩ Fast Forward develop
+      run: |
+        create_pr() {
+          curl -s \
+            -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: token ${{ inputs.TOKEN }}" \
+            -d "{ \"title\": \"$1\", \"head\": \"$2\", \"base\": \"$3\" }" \
+            "https://api.github.com/repos/${{ github.repository }}/pulls" \
+            | jq -r ".html_url"
+        }
+        BRANCH="merge/v${{ env.VERSION }}"
+        
+        git config --global user.email "${{ inputs.BOT_EMAIL }}" 
+        git config --global user.name "${{ inputs.BOT_NAME }}"
+        git fetch --all
+        git checkout origin/${{ inputs.DEVELOP }}
+        git switch -c ${{ inputs.DEVELOP }}
+        if git merge origin/${{ inputs.MAIN }} --ff-only;  then
+          echo "Fast-forward merge successful"
+          git push origin ${{ inputs.DEVELOP }}
+        else
+          echo "Fast-forward merge failed, creating a new branch and PR for manual review"
+          git checkout ${{ inputs.MAIN }} 
+          git checkout -b "${BRANCH}"
+          git push -u origin "${BRANCH}"
+          PR_URL=$(create_pr "🔖 ${BRANCH} to ${{ inputs.DEVELOP }} 🤖⏩" "${BRANCH}" ${{ inputs.DEVELOP }})
+          echo "Created PR: ${PR_URL}"
+        fi
+      shell: bash
+    - name: 🌐 Get commit URL
+      run: |
+        commit_url=https://github.com/${{ github.repository }}/commit/${{ github.event.after }}
+        echo "Commit URL: ${commit_url}"
+      shell: bash
