@@ -4,11 +4,12 @@ This GitHub Action attempts to fast-forward the `dev` branch with the `master` b
 
 ## Inputs
 
-- `MAIN`: The name of the main branch. Default is `master`.
-- `DEVELOP`: The name of the development branch. Default is `dev`.
+- `MAIN`: The name of the main branch. Default is `main`.
+- `DEVELOP`: The name of the development branch. Default is `develop`.
 - `BOT_NAME`: The name of the bot that will perform the operation.
 - `BOT_EMAIL`: The email of the bot.
 - `TOKEN`: The GitHub token. Please note that this token should have the necessary permissions to perform branch operations.
+- `VERSION`: Only used when creating name of branch for PR. Defaults to version found in package.json 
 
 ## Usage
 
@@ -32,5 +33,5 @@ jobs:
           MAIN: 'master'
           DEVELOP: 'dev'
           BOT_NAME: '🤖 workflows[bot]2023'
-          BOT_EMAIL: 'devops+bot2023@muuvlabs.com'
-          TOKEN: ${{ secrets.GH_TOKEN_READ_WRITE_REPOS }}
+          BOT_EMAIL: 'devops+bot2023@org.com'
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
