@@ -12,9 +12,11 @@ inputs:
   BOT_NAME:
     description: 'Name of the bot'
     required: true
+    default: '🤖 knerd-bot'
   BOT_EMAIL:
     description: 'Email of the bot'
     required: true
+    default: 'contact@midnightnerd.com'
   TOKEN:
     description: 'GitHub token'
     required: true
